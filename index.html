@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benim Hikayem Filtre</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        #video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 400px;
+        }
+        #overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 400px;
+            pointer-events: none;
+        }
+        #canvas {
+            display: none;
+        }
+        #capture-btn, #download-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #hashtags {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Benim Hikayem Filtre</h1>
+    <p>Kameranızı açın ve kitap kapağındaki yerinizi alın!</p>
+    <video id="video" autoplay></video>
+    <img id="overlay" src="book_cover_no_character.png" alt="Book Cover Overlay">
+    <canvas id="canvas"></canvas>
+    <br>
+    <button id="capture-btn">Fotoğraf Çek</button>
+    <a id="download-btn" style="display:none;" download="benim_hikayem.png">İndir</a>
+    <p id="hashtags">#MelisaBenimHikayem #KitapKapagindaBen #BenimHikayemChallenge</p>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const overlay = document.getElementById('overlay');
+        
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Kamera erişim hatası!", err);
+            });
+        
+        captureBtn.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            context.drawImage(overlay, 0, 0, canvas.width, canvas.height);
+            
+            downloadBtn.href = canvas.toDataURL('image/png');
+            downloadBtn.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
